@@ -1115,6 +1115,320 @@
                 max-height: 95vh;
             }
         }
+        /* =================== СТИЛИ ДЛЯ КАЛЬКУЛЯТОРА =================== */
+#calculator-tab {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+.calculator-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* QR-секция */
+.qr-section {
+    background: white;
+    border-radius: var(--radius);
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+}
+
+.qr-card {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#qrcode {
+    width: 150px;
+    height: 150px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--gray);
+    border: 2px dashed #dee2e6;
+}
+
+.qr-info {
+    flex: 1;
+}
+
+.url-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.url-box input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+}
+
+/* Основной калькулятор */
+.calculator-section {
+    background: white;
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.role-selector {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.role-selector label {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.role-selector select {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Финансовая сводка */
+.finance-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    background: #f8f9fa;
+    border-radius: var(--radius);
+    padding: 20px;
+    border-left: 4px solid var(--primary);
+}
+
+.summary-card:nth-child(2) {
+    border-left-color: var(--accent);
+}
+
+.summary-card:nth-child(3) {
+    border-left-color: var(--warning);
+}
+
+.summary-card h3 {
+    font-size: 1rem;
+    color: var(--dark);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.amount {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#cashflowAmount {
+    color: var(--accent);
+}
+
+#netWorthAmount {
+    color: var(--warning);
+}
+
+.cash-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    transform: scale(1.1);
+}
+
+.cash-controls input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+}
+
+.cashflow-breakdown {
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.cashflow-breakdown div {
+    margin-bottom: 5px;
+}
+
+/* Активы и пассивы */
+.assets-liabilities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .assets-liabilities {
+        grid-template-columns: 1fr;
+    }
+}
+
+.assets-liabilities .column {
+    background: #f8f9fa;
+    border-radius: var(--radius);
+    padding: 20px;
+}
+
+.assets-liabilities h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.column:nth-child(2) h3 {
+    color: var(--danger);
+}
+
+.items-list {
+    min-height: 150px;
+    margin-bottom: 15px;
+}
+
+.item-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.item-name {
+    font-weight: 600;
+}
+
+.item-amount {
+    font-weight: bold;
+}
+
+.item-amount.positive {
+    color: var(--accent);
+}
+
+.item-amount.negative {
+    color: var(--danger);
+}
+
+.item-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Быстрые действия */
+.quick-actions {
+    margin-bottom: 30px;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.btn-action {
+    padding: 15px;
+    background: var(--light);
+    border: 2px solid #dee2e6;
+    border-radius: var(--radius);
+    color: var(--dark);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.btn-action:hover {
+    background: white;
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+.btn-action i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+/* История операций */
+.history-section {
+    background: #f8f9fa;
+    border-radius: var(--radius);
+    padding: 20px;
+}
+
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding-right: 10px;
+}
+
+.history-item {
+    padding: 10px 15px;
+    background: white;
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    border-left: 3px solid var(--primary);
+    font-size: 0.9rem;
+}
+
+.history-item.positive {
+    border-left-color: var(--accent);
+}
+
+.history-item.negative {
+    border-left-color: var(--danger);
+}
+
+.history-time {
+    color: var(--gray);
+    font-size: 0.8rem;
+    margin-right: 10px;
+}
     </style>
 </head>
 <body>
@@ -1139,6 +1453,10 @@
                 <i class="fas fa-layer-group"></i>
                 <span>Редактор карточек</span>
             </button>
+             <button class="tab-button" data-tab="calculator-tab">
+        <i class="fas fa-calculator"></i>
+        <span>Калькулятор</span>
+    </button>
         </nav>
 
         <!-- Основной контент -->
@@ -2121,9 +2439,130 @@
         <i class="fas fa-check-circle"></i>
         <span id="toastMessage">Изменения сохранены</span>
     </div>
+<!-- ВКЛАДКА КАЛЬКУЛЯТОРА -->
+<div class="tab-pane" id="calculator-tab">
+    <div class="calculator-container">
+        <!-- QR-код и ссылка -->
+        <div class="qr-section">
+            <h2><i class="fas fa-qrcode"></i> Быстрый доступ</h2>
+            <div class="qr-card">
+                <div id="qrcode"></div>
+                <div class="qr-info">
+                    <p>Отсканируйте QR-код для быстрого доступа к калькулятору</p>
+                    <div class="url-box">
+                        <input type="text" id="pageUrl" readonly value="https://gsspplay.github.io">
+                        <button class="btn btn-small" id="copyUrlBtn">
+                            <i class="fas fa-copy"></i> Копировать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Основной калькулятор -->
+        <div class="calculator-section">
+            <h2><i class="fas fa-calculator"></i> Персональный калькулятор</h2>
+            
+            <!-- Выбор роли -->
+            <div class="role-selector">
+                <label for="roleSelect"><i class="fas fa-user-tie"></i> Выберите свою роль:</label>
+                <select id="roleSelect" class="form-control">
+                    <option value="">-- Выберите роль --</option>
+                    <!-- Роли будут загружены из cards.js -->
+                </select>
+                <button class="btn btn-small" id="randomRoleBtn">
+                    <i class="fas fa-random"></i> Случайная роль
+                </button>
+            </div>
+
+            <!-- Основные показатели -->
+            <div class="finance-summary">
+                <div class="summary-card">
+                    <h3><i class="fas fa-wallet"></i> Наличные</h3>
+                    <div class="amount" id="cashAmount">0 ₽</div>
+                    <div class="cash-controls">
+                        <button class="btn-icon" data-action="add-cash"><i class="fas fa-plus"></i></button>
+                        <button class="btn-icon" data-action="subtract-cash"><i class="fas fa-minus"></i></button>
+                        <input type="number" id="cashInput" placeholder="Сумма" value="1000">
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <h3><i class="fas fa-money-check-alt"></i> Денежный поток</h3>
+                    <div class="amount" id="cashflowAmount">0 ₽/мес</div>
+                    <div class="cashflow-breakdown">
+                        <div>Доходы: <span id="totalIncome">0 ₽</span></div>
+                        <div>Расходы: <span id="totalExpenses">0 ₽</span></div>
+                    </div>
+                </div>
+                
+                <div class="summary-card">
+                    <h3><i class="fas fa-balance-scale"></i> Чистая стоимость</h3>
+                    <div class="amount" id="netWorthAmount">0 ₽</div>
+                    <button class="btn btn-small" id="resetCalculator">
+                        <i class="fas fa-redo"></i> Сбросить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Активы и пассивы -->
+            <div class="assets-liabilities">
+                <div class="column">
+                    <h3><i class="fas fa-chart-line"></i> Активы (доходы)</h3>
+                    <div class="items-list" id="assetsList">
+                        <!-- Активы будут здесь -->
+                    </div>
+                    <button class="btn btn-small" id="addAssetBtn">
+                        <i class="fas fa-plus"></i> Добавить актив
+                    </button>
+                </div>
+                
+                <div class="column">
+                    <h3><i class="fas fa-credit-card"></i> Пассивы (расходы)</h3>
+                    <div class="items-list" id="liabilitiesList">
+                        <!-- Пассивы будут здесь -->
+                    </div>
+                    <button class="btn btn-small" id="addLiabilityBtn">
+                        <i class="fas fa-plus"></i> Добавить пассив
+                    </button>
+                </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+                <h3><i class="fas fa-bolt"></i> Быстрые действия</h3>
+                <div class="action-buttons">
+                    <button class="btn-action" data-action="salary">
+                        <i class="fas fa-money-check-alt"></i> Получить зарплату
+                    </button>
+                    <button class="btn-action" data-action="small-deal">
+                        <i class="fas fa-handshake"></i> Малая сделка
+                    </button>
+                    <button class="btn-action" data-action="market-event">
+                        <i class="fas fa-chart-line"></i> Событие рынка
+                    </button>
+                    <button class="btn-action" data-action="charity">
+                        <i class="fas fa-hands-helping"></i> Благотворительность
+                    </button>
+                </div>
+            </div>
+
+            <!-- История операций -->
+            <div class="history-section">
+                <h3><i class="fas fa-history"></i> История операций</h3>
+                <div class="history-list" id="historyList">
+                    <!-- История будет здесь -->
+                </div>
+                <button class="btn btn-small" id="clearHistoryBtn">
+                    <i class="fas fa-trash"></i> Очистить историю
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Подключаем JavaScript файлы -->
     <script src="cards.js"></script>
+    <script src="calculator.js"></script> 
     <script src="script.js"></script>
     
     <!-- Встроенный JavaScript -->
