@@ -1,6 +1,6 @@
-// script.js
+// script.js - Полная рабочая версия с редактором карточек
 // =================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===================
-let cardsData = JSON.parse(localStorage.getItem('cashflowCards')) || getDefaultCardsData();
+let cardsData = JSON.parse(localStorage.getItem('cashflowCards')) || CARDS_DATA;
 let currentFilter = 'all';
 let editingCardId = null;
 
@@ -14,15 +14,38 @@ const cardsContainer = document.getElementById('cardsContainer');
 const searchInput = document.getElementById('searchInput');
 const filterButtonsContainer = document.getElementById('filter-buttons');
 
-// =================== ФУНКЦИИ ===================
+// Модальное окно элементы
+const cardModal = document.getElementById('cardModal');
+const modalTitle = document.getElementById('modalTitle');
+const cardForm = document.getElementById('cardForm');
+const cardIdInput = document.getElementById('cardId');
+const cardTitleInput = document.getElementById('cardTitle');
+const cardTypeInput = document.getElementById('cardType');
+const cardCategorySelect = document.getElementById('cardCategory');
+const colorClassSelect = document.getElementById('colorClass');
+const cardFooterInput = document.getElementById('cardFooter');
+const fieldsList = document.getElementById('fieldsList');
+const addFieldBtn = document.getElementById('addFieldBtn');
+const saveCardBtn = document.getElementById('saveCardBtn');
+const deleteCardBtn = document.getElementById('deleteCardBtn');
+const closeModalBtn = document.getElementById('closeModal');
+const cancelBtn = document.getElementById('cancelBtn');
+
+// Toast элементы
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+
+// =================== ОСНОВНЫЕ ФУНКЦИИ ===================
+
+// Обновление шапки для вкладок
 function updateHeaderForTab(tabId) {
     if (tabId === 'rules-tab') {
         headerTitle.textContent = 'Cashflow Газстройпром';
         headerSubtitle.textContent = 'Правила настольной финансовой игры с корпоративной механикой';
-        
+
         statsContainer.innerHTML = `
             <div class="stat-card">
-                <span class="number">195</span>
+                <span class="number">${CARDS_DATA.length + 195}</span>
                 <span class="label">Игровых элементов</span>
             </div>
             <div class="stat-card">
@@ -38,93 +61,49 @@ function updateHeaderForTab(tabId) {
                 <span class="label">Часа игры</span>
             </div>
         `;
-        
-        // Загружаем правила
-        loadRulesContent();
-        
+
     } else if (tabId === 'cards-tab') {
         headerTitle.textContent = 'Cashflow Газстройпром';
-        headerSubtitle.textContent = 'Элементы игры';
+        headerSubtitle.textContent = 'Редактор игровых карточек';
+
+        const rolesCount = cardsData.filter(c => c.category === 'roles').length;
         
         statsContainer.innerHTML = `
             <div class="stat-card">
-                <span class="number">${cardsData.filter(c => c.category === 'roles').length}</span>
+                <span class="number">${rolesCount}</span>
                 <span class="label">Игровых ролей</span>
             </div>
             <div class="stat-card">
                 <span class="number">${cardsData.length}</span>
-                <span class="label">Карточек</span>
+                <span class="label">Всего карточек</span>
             </div>
             <div class="stat-card">
                 <span class="number">8</span>
-                <span class="label">Колод</span>
+                <span class="label">Категорий</span>
             </div>
             <div class="stat-card">
-                <span class="number">${cardsData.length + 195}</span>
-                <span class="label">Всего элементов</span>
+                <span class="number">${countAllFields()}</span>
+                <span class="label">Всего полей</span>
             </div>
         `;
-        
+
         initCardsEditor();
     }
 }
 
-async function loadRulesContent() {
-    // Для Netlify используем этот путь
-    try {
-        const response = await fetch('/content/rules.html');
-        if (response.ok) {
-            const html = await response.text();
-            document.getElementById('rules-content-placeholder').innerHTML = html;
-            return;
-        }
-    } catch (e) {
-        console.log('Попытка 1 не удалась');
-    }
-    
-    // Пробуем другой путь
-    try {
-        const response = await fetch('content/rules.html');
-        if (response.ok) {
-            const html = await response.text();
-            document.getElementById('rules-content-placeholder').innerHTML = html;
-            return;
-        }
-    } catch (e) {
-        console.log('Попытка 2 не удалась');
-    }
-    
-    // Если всё провалилось, показываем базовые правила
-    showBasicRules();
+// Подсчет всех полей во всех карточках
+function countAllFields() {
+    return cardsData.reduce((total, card) => total + card.fields.length, 0);
 }
 
-function showBasicRules() {
-    document.getElementById('rules-content-placeholder').innerHTML = `
-        <div style="text-align: center; padding: 40px;">
-            <h2><i class="fas fa-book"></i> Правила Cashflow Газстройпром</h2>
-            <p>Для полных правил скачайте файл:</p>
-            <a href="/content/rules.html" download style="
-                display: inline-block;
-                margin-top: 20px;
-                padding: 12px 24px;
-                background: var(--primary);
-                color: white;
-                text-decoration: none;
-                border-radius: 8px;
-                font-weight: bold;
-            ">
-                <i class="fas fa-download"></i> Скачать правила (HTML)
-            </a>
-        </div>
-    `;
-}
-
+// Инициализация редактора карточек
 function initCardsEditor() {
     createFilterButtons();
     renderCards();
-    initCardsEventHandlers();
+    initModalHandlers();
 }
 
+// Создание кнопок фильтров
 function createFilterButtons() {
     const filters = [
         { id: 'all', label: 'Все карточки', icon: 'fas fa-layer-group' },
@@ -137,18 +116,17 @@ function createFilterButtons() {
         { id: 'education', label: 'Образование', icon: 'fas fa-graduation-cap' },
         { id: 'dream', label: 'Мечты', icon: 'fas fa-star' }
     ];
-    
+
     filterButtonsContainer.innerHTML = '';
-    
+
     filters.forEach(filter => {
-        // Считаем количество карточек для этой категории
         let count = 0;
         if (filter.id === 'all') {
             count = cardsData.length;
         } else {
             count = cardsData.filter(card => card.category === filter.id).length;
         }
-        
+
         const button = document.createElement('button');
         button.className = `filter-btn ${filter.id === 'all' ? 'active' : ''}`;
         button.innerHTML = `
@@ -161,31 +139,33 @@ function createFilterButtons() {
             currentFilter = filter.id;
             renderCards();
         });
-        
+
         filterButtonsContainer.appendChild(button);
     });
 }
 
+// Отображение карточек
 function renderCards() {
-    console.log('Всего карточек:', cardsData.length);
-    console.log('Карточки образования:', cardsData.filter(card => card.category === 'education'));
-    
     // Фильтрация
     let filteredCards = cardsData;
     if (currentFilter !== 'all') {
         filteredCards = cardsData.filter(card => card.category === currentFilter);
     }
-    
+
     // Поиск
     const searchTerm = searchInput.value.toLowerCase();
     if (searchTerm) {
         filteredCards = filteredCards.filter(card => 
             card.title.toLowerCase().includes(searchTerm) ||
             card.type.toLowerCase().includes(searchTerm) ||
-            card.footer.toLowerCase().includes(searchTerm)
+            card.footer.toLowerCase().includes(searchTerm) ||
+            card.fields.some(field => 
+                field.name.toLowerCase().includes(searchTerm) || 
+                field.value.toLowerCase().includes(searchTerm)
+            )
         );
     }
-    
+
     // Группировка по категориям
     const groupedCards = {};
     filteredCards.forEach(card => {
@@ -194,14 +174,14 @@ function renderCards() {
         }
         groupedCards[card.category].push(card);
     });
-    
+
     // Отрисовка
     cardsContainer.innerHTML = '';
-    
+
     Object.keys(groupedCards).forEach(category => {
         const section = document.createElement('div');
         section.className = 'card-section';
-        
+
         const categoryNames = {
             'roles': 'Роли',
             'small-deals': 'Малые сделки',
@@ -212,7 +192,7 @@ function renderCards() {
             'education': 'Образование',
             'dream': 'Мечты'
         };
-        
+
         section.innerHTML = `
             <h3 class="section-title">
                 <i class="fas fa-folder"></i>
@@ -223,16 +203,16 @@ function renderCards() {
             </h3>
             <div class="card-grid" id="grid-${category}"></div>
         `;
-        
+
         cardsContainer.appendChild(section);
-        
+
         const grid = document.getElementById(`grid-${category}`);
         groupedCards[category].forEach(card => {
             const cardElement = createCardElement(card);
             grid.appendChild(cardElement);
         });
     });
-    
+
     // Если нет карточек
     if (filteredCards.length === 0) {
         cardsContainer.innerHTML = `
@@ -245,10 +225,11 @@ function renderCards() {
     }
 }
 
+// Создание элемента карточки для отображения
 function createCardElement(card) {
     const div = document.createElement('div');
     div.className = 'card';
-    
+
     // Определяем цветовую категорию
     let colorClass = '';
     if (card.colorClass) {
@@ -268,7 +249,7 @@ function createCardElement(card) {
         colorClass = `card-${colorMap[card.category] || 'role'}`;
     }
     div.classList.add(colorClass);
-    
+
     // Поля карточки
     const fieldsHtml = card.fields.map(field => `
         <div class="card-field">
@@ -276,7 +257,7 @@ function createCardElement(card) {
             <span class="field-value ${field.specialClass || ''}">${field.value}</span>
         </div>
     `).join('');
-    
+
     div.innerHTML = `
         <div class="card-actions">
             <button class="card-action-btn edit" onclick="editCard(${card.id})">
@@ -301,14 +282,258 @@ function createCardElement(card) {
             ${card.footer}
         </div>
     `;
-    
+
     return div;
 }
 
-// Остальные функции (editCard, deleteCard, initCardsEventHandlers и т.д.)
-// ... их нужно перенести из вашего текущего кода ...
+// =================== ФУНКЦИИ РЕДАКТОРА КАРТОЧЕК ===================
+
+// Редактирование карточки
+function editCard(id) {
+    const card = cardsData.find(c => c.id === id);
+    if (!card) return;
+    
+    editingCardId = id;
+    
+    // Заполняем форму данными карточки
+    cardIdInput.value = card.id;
+    cardTitleInput.value = card.title;
+    cardTypeInput.value = card.type;
+    cardCategorySelect.value = card.category;
+    colorClassSelect.value = card.colorClass || '';
+    cardFooterInput.value = card.footer || '';
+    
+    // Заполняем поля
+    fieldsList.innerHTML = '';
+    card.fields.forEach((field, index) => {
+        addFieldToForm(field.name, field.value, field.specialClass || '', index);
+    });
+    
+    // Обновляем заголовок модального окна
+    modalTitle.textContent = 'Редактирование карточки';
+    deleteCardBtn.style.display = 'block';
+    
+    // Показываем модальное окно
+    cardModal.classList.add('active');
+}
+
+// Удаление карточки
+function deleteCard(id) {
+    if (!confirm('Вы уверены, что хотите удалить эту карточку?')) return;
+    
+    cardsData = cardsData.filter(card => card.id !== id);
+    saveToLocalStorage();
+    renderCards();
+    showToast('Карточка удалена', 'success');
+}
+
+// Добавление новой карточки
+function addNewCard() {
+    editingCardId = null;
+    
+    // Очищаем форму
+    cardForm.reset();
+    fieldsList.innerHTML = '';
+    
+    // Устанавливаем значения по умолчанию
+    const newId = cardsData.length > 0 ? Math.max(...cardsData.map(c => c.id)) + 1 : 1;
+    cardIdInput.value = newId;
+    cardCategorySelect.value = 'roles';
+    colorClassSelect.value = '';
+    
+    // Добавляем одно поле по умолчанию
+    addFieldToForm('Название поля', 'Значение', '', 0);
+    
+    // Обновляем заголовок модального окна
+    modalTitle.textContent = 'Создание новой карточки';
+    deleteCardBtn.style.display = 'none';
+    
+    // Показываем модальное окно
+    cardModal.classList.add('active');
+}
+
+// Сохранение карточки
+function saveCard() {
+    // Собираем данные из формы
+    const id = parseInt(cardIdInput.value) || (cardsData.length > 0 ? Math.max(...cardsData.map(c => c.id)) + 1 : 1);
+    const title = cardTitleInput.value.trim();
+    const type = cardTypeInput.value.trim();
+    const category = cardCategorySelect.value;
+    const colorClass = colorClassSelect.value || null;
+    const footer = cardFooterInput.value.trim();
+    
+    // Собираем поля
+    const fields = [];
+    const fieldInputs = fieldsList.querySelectorAll('.field-item');
+    
+    fieldInputs.forEach(item => {
+        const nameInput = item.querySelector('.field-name-input');
+        const valueInput = item.querySelector('.field-value-input');
+        const classInput = item.querySelector('.field-class-input');
+        
+        if (nameInput && valueInput) {
+            fields.push({
+                name: nameInput.value.trim(),
+                value: valueInput.value.trim(),
+                specialClass: classInput ? classInput.value.trim() : ''
+            });
+        }
+    });
+    
+    // Проверка обязательных полей
+    if (!title || !type || !category || fields.length === 0) {
+        showToast('Заполните все обязательные поля', 'error');
+        return;
+    }
+    
+    // Создаем объект карточки
+    const cardData = {
+        id,
+        title,
+        type,
+        category,
+        fields,
+        footer
+    };
+    
+    if (colorClass) {
+        cardData.colorClass = colorClass;
+    }
+    
+    // Обновляем или добавляем карточку
+    if (editingCardId !== null) {
+        // Редактирование существующей
+        const index = cardsData.findIndex(c => c.id === editingCardId);
+        if (index !== -1) {
+            cardsData[index] = cardData;
+        }
+    } else {
+        // Добавление новой
+        cardsData.push(cardData);
+    }
+    
+    // Сохраняем и обновляем отображение
+    saveToLocalStorage();
+    renderCards();
+    createFilterButtons(); // Обновляем счетчики в фильтрах
+    
+    // Закрываем модальное окно и показываем уведомление
+    closeModal();
+    showToast(editingCardId !== null ? 'Карточка обновлена' : 'Карточка добавлена', 'success');
+}
+
+// Добавление поля в форму
+function addFieldToForm(name = '', value = '', cssClass = '', index = 0) {
+    const fieldItem = document.createElement('div');
+    fieldItem.className = 'field-item';
+    fieldItem.innerHTML = `
+        <div class="field-header">
+            <h4>Поле #${index + 1}</h4>
+            <div class="field-actions">
+                <button type="button" class="btn btn-small btn-danger remove-field-btn">
+                    <i class="fas fa-trash"></i> Удалить
+                </button>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Название поля</label>
+                <input type="text" class="form-control field-name-input" value="${name}" placeholder="Например: Стоимость">
+            </div>
+            <div class="form-group">
+                <label>Значение</label>
+                <input type="text" class="form-control field-value-input" value="${value}" placeholder="Например: 1 000 000 ₽">
+            </div>
+            <div class="form-group">
+                <label>CSS класс (опционально)</label>
+                <select class="form-control field-class-input">
+                    <option value="">Нет</option>
+                    <option value="cashflow-positive" ${cssClass === 'cashflow-positive' ? 'selected' : ''}>cashflow-positive (зеленый)</option>
+                    <option value="cashflow-negative" ${cssClass === 'cashflow-negative' ? 'selected' : ''}>cashflow-negative (красный)</option>
+                </select>
+            </div>
+        </div>
+    `;
+    
+    // Обработчик для кнопки удаления поля
+    const removeBtn = fieldItem.querySelector('.remove-field-btn');
+    removeBtn.addEventListener('click', () => {
+        if (fieldsList.children.length > 1) {
+            fieldItem.remove();
+        } else {
+            showToast('Должно быть хотя бы одно поле', 'error');
+        }
+    });
+    
+    fieldsList.appendChild(fieldItem);
+}
+
+// Инициализация обработчиков модального окна
+function initModalHandlers() {
+    // Кнопка добавления поля
+    addFieldBtn.addEventListener('click', () => {
+        addFieldToForm('', '', '', fieldsList.children.length);
+    });
+    
+    // Кнопка сохранения
+    saveCardBtn.addEventListener('click', saveCard);
+    
+    // Кнопка удаления
+    deleteCardBtn.addEventListener('click', () => {
+        if (editingCardId !== null) {
+            deleteCard(editingCardId);
+            closeModal();
+        }
+    });
+    
+    // Кнопки закрытия
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    
+    // Закрытие по клику вне окна
+    cardModal.addEventListener('click', (e) => {
+        if (e.target === cardModal) {
+            closeModal();
+        }
+    });
+}
+
+// Закрытие модального окна
+function closeModal() {
+    cardModal.classList.remove('active');
+    editingCardId = null;
+}
+
+// Сохранение в LocalStorage
+function saveToLocalStorage() {
+    localStorage.setItem('cashflowCards', JSON.stringify(cardsData));
+}
+
+// Сброс к исходным данным
+function resetToDefault() {
+    if (confirm('Вы уверены? Все ваши изменения карточек будут удалены.')) {
+        localStorage.removeItem('cashflowCards');
+        cardsData = CARDS_DATA;
+        currentFilter = 'all';
+        renderCards();
+        createFilterButtons();
+        showToast('Данные сброшены к исходным', 'success');
+    }
+}
+
+// Показать toast-уведомление
+function showToast(message, type = 'success') {
+    toastMessage.textContent = message;
+    toast.className = 'toast ' + type;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
 
 // =================== ИНИЦИАЛИЗАЦИЯ ===================
+
 document.addEventListener('DOMContentLoaded', function() {
     // Инициализируем первую вкладку
     updateHeaderForTab('rules-tab');
@@ -332,4 +557,29 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', () => {
         renderCards();
     });
+    
+    // Кнопка добавления карточки
+    document.getElementById('addCardBtn').addEventListener('click', addNewCard);
+    
+    // Кнопка экспорта
+    document.getElementById('exportBtn').addEventListener('click', () => {
+        const dataStr = JSON.stringify(cardsData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const exportFileDefaultName = 'cashflow-cards.json';
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+        
+        showToast('Данные экспортированы в JSON', 'success');
+    });
+    
+    // Кнопка сброса
+    document.getElementById('resetBtn').addEventListener('click', resetToDefault);
+    
+    // Инициализация модального окна
+    initModalHandlers();
+    
+    console.log('Cashflow Газстройпром загружен. Редактор карточек готов к работе.');
 });
