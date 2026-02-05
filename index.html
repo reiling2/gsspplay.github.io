@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashflow Газстройпром - Командный центр</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a3c6e;
+            --secondary: #2a5caa;
+            --accent: #4CAF50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --corporate: #795548;
+            --radius: 12px;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --role: #3f51b5;
+            --real-estate: #4caf50;
+            --stocks: #ff9800;
+            --business: #9c27b0;
+            --market-pos: #2196f3;
+            --market-neg: #f44336;
+            --personal-pos: #00bcd4;
+            --personal-neg: #ff5722;
+            --personal-neutral: #9e9e9e;
+            --dream: #e91e63;
+            --education-blue: #2196F3;
+            --education-green: #4CAF50;
+            --education-yellow: #FFC107;
+            --education-red: #F44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Main Container */
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        /* Unified Header */
+        .main-header {
+            background: linear-gradient(to right, var(--primary), #143258);
+            color: white;
+            padding: 35px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+
+        .main-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Stats Container */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            min-width: 140px;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Tabs Navigation */
+        .tabs-navigation {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            padding: 0 40px;
+        }
+
+        .tab-button {
+            padding: 20px 30px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary);
+            background: rgba(26, 60, 110, 0.05);
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+        }
+
+        .tab-button.active::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .tab-button i {
+            font-size: 1.3rem;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            padding: 40px;
+            min-height: 600px;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =================== СТИЛИ ДЛЯ РЕДАКТОРА КАРТОЧЕК =================== */
+        #cards-tab {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .cards-tab-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Статистика редактора */
+        .cards-stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .cards-stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            min-width: 180px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .cards-stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .cards-stat-card .number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            display: block;
+            color: var(--primary);
+        }
+
+        .cards-stat-card .label {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+
+        /* Основные элементы управления */
+        .main-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow);
+            background-color: white;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        .btn-success {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-3px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-3px);
+        }
+
+        /* Кнопки фильтрации */
+        .filter-section {
+            margin-bottom: 25px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 12px 20px;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .filter-btn.active {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Сетка карточек */
+        .card-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        /* Стили отдельных карточек */
+        .card {
+            background-color: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--primary);
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .card:hover .card-actions {
+            opacity: 1;
+        }
+
+        .card-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .card-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .card-action-btn.edit {
+            color: var(--primary);
+        }
+
+        .card-action-btn.delete {
+            color: var(--danger);
+        }
+
+        .card-header {
+            padding: 20px;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .card-id {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.3;
+            margin-right: 50px;
+        }
+
+        .card-type {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-field {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e9ecef;
+        }
+
+        .field-name {
+            font-weight: 600;
+            color: var(--dark);
+            flex: 1;
+        }
+
+        .field-value {
+            font-weight: 700;
+            color: var(--secondary);
+            text-align: right;
+            flex: 1;
+        }
+
+        .cashflow-positive {
+            color: var(--accent);
+        }
+
+        .cashflow-negative {
+            color: var(--danger);
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Цветовое кодирование категорий для карточек */
+        .card-role { border-top-color: var(--role); }
+        .card-real-estate { border-top-color: var(--real-estate); }
+        .card-stocks { border-top-color: var(--stocks); }
+        .card-business { border-top-color: var(--business); }
+        .card-market-pos { border-top-color: var(--market-pos); }
+        .card-market-neg { border-top-color: var(--market-neg); }
+        .card-corporate { border-top-color: var(--corporate); }
+        .card-personal-pos { border-top-color: var(--personal-pos); }
+        .card-personal-neg { border-top-color: var(--personal-neg); }
+        .card-personal-neutral { border-top-color: var(--personal-neutral); }
+        .card-dream { border-top-color: var(--dream); }
+        .card-education-blue { border-top-color: var(--education-blue); }
+        .card-education-green { border-top-color: var(--education-green); }
+        .card-education-yellow { border-top-color: var(--education-yellow); }
+        .card-education-red { border-top-color: var(--education-red); }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-radius: var(--radius) var(--radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 60, 110, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .fields-container {
+            margin-top: 20px;
+        }
+
+        .field-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .field-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-radius: 0 0 var(--radius) var(--radius);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        /* Toast уведомления */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--accent);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        /* Футер редактора */
+        .cards-footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* =================== СТИЛИ ДЛЯ ПРАВИЛ ИГРЫ =================== */
+        /* Quick Stats в правилах */
+        #rules-tab .quick-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        #rules-tab .stat {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        #rules-tab .stat .number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        #rules-tab .stat .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--accent);
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toc ul {
+            list-style: none;
+            column-count: 2;
+            column-gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .toc ul {
+                column-count: 1;
+            }
+        }
+
+        .toc li {
+            margin-bottom: 15px;
+            break-inside: avoid;
+        }
+
+        .toc a {
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: var(--radius);
+            transition: all 0.3s;
+        }
+
+        .toc a:hover {
+            background: var(--light);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .toc a i {
+            color: var(--accent);
+        }
+
+        /* Rules Sections */
+        .rules-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .rules-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .section-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .content-card.warning {
+            border-left-color: var(--warning);
+            background: #fff8e1;
+        }
+
+        .content-card.danger {
+            border-left-color: var(--danger);
+            background: #ffebee;
+        }
+
+        .content-card.corporate {
+            border-left-color: var(--corporate);
+            background: #efebe9;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tables */
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .rules-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .rules-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .rules-table tr:hover {
+            background: #f5f7fa;
+        }
+
+        /* Steps */
+        .step {
+            display: flex;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .step-number {
+            min-width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        /* Victory Conditions */
+        .victory-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border-top: 5px solid;
+            transition: transform 0.3s;
+        }
+
+        .victory-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .victory-card.classic-1 {
+            border-top-color: #4CAF50;
+        }
+
+        .victory-card.classic-2 {
+            border-top-color: #2196F3;
+        }
+
+        .victory-card.corporate {
+            border-top-color: #795548;
+        }
+
+        .victory-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Game Board Visualization */
+        .board-visual {
+            background: #e8f5e9;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .inner-track, .outer-track {
+            display: inline-block;
+            padding: 20px;
+            margin: 15px;
+            border: 3px dashed;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .inner-track {
+            width: 200px;
+            height: 200px;
+            border-color: #4CAF50;
+        }
+
+        .outer-track {
+            width: 300px;
+            height: 300px;
+            border-color: #2196F3;
+        }
+
+        .track-label {
+            position: absolute;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 30px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            transition: width 0.5s;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 25px 20px;
+            }
+            
+            .main-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tab-content {
+                padding: 25px 20px;
+            }
+            
+            .tabs-navigation {
+                padding: 0 10px;
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                padding: 15px;
+                justify-content: center;
+            }
+            
+            .stat-card {
+                min-width: calc(50% - 15px);
+            }
+            
+            /* Для редактора карточек */
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cards-stat-card {
+                min-width: 140px;
+            }
+            
+            .main-controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .modal-content {
+                max-height: 95vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Unified Header (меняется в зависимости от вкладки) -->
+        <header class="main-header" id="main-header">
+            <h1 id="header-title">Cashflow Газстройпром</h1>
+            <p class="subtitle" id="header-subtitle">Полные правила настольной финансовой игры с корпоративной механикой</p>
+            
+            <div class="stats-container" id="stats-container">
+                <!-- Статистика будет заполнена JavaScript -->
+            </div>
+        </header>
+
+        <!-- Навигация по вкладкам -->
+        <nav class="tabs-navigation">
+            <button class="tab-button active" data-tab="rules-tab">
+                <i class="fas fa-book-open"></i>
+                <span>Правила игры</span>
+            </button>
+            <button class="tab-button" data-tab="cards-tab">
+                <i class="fas fa-layer-group"></i>
+                <span>Редактор карточек</span>
+            </button>
+        </nav>
+
+        <!-- Основной контент -->
+        <main class="tab-content">
+            <!-- ВКЛАДКА ПРАВИЛ -->
+            <div class="tab-pane active" id="rules-tab">
+                <div class="container" style="max-width: 1200px; margin: 0 auto;">
+                    <!-- Table of Contents -->
+                    <div class="toc">
+                        <h2><i class="fas fa-list"></i> Содержание правил</h2>
+                        <ul>
+                            <li><a href="#intro"><i class="fas fa-play-circle"></i> 1. Введение</a></li>
+                            <li><a href="#components"><i class="fas fa-box-open"></i> 2. Компоненты игры</a></li>
+                            <li><a href="#setup"><i class="fas fa-cogs"></i> 3. Подготовка к игре</a></li>
+                            <li><a href="#gameplay"><i class="fas fa-dice"></i> 4. Игровой процесс</a></li>
+                            <li><a href="#corporate"><i class="fas fa-building"></i> 5. Корпоративная система</a></li>
+                            <li><a href="#victory"><i class="fas fa-trophy"></i> 6. Условия победы</a></li>
+                            <li><a href="#advanced"><i class="fas fa-rocket"></i> 7. Расширенные правила</a></li>
+                            <li><a href="#examples"><i class="fas fa-graduation-cap"></i> 8. Примеры и стратегии</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Section 1: Introduction -->
+                    <div class="rules-section" id="intro">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">1. Введение</h2>
+                                <p class="section-subtitle">Что такое Cashflow Газстройпром?</p>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-lightbulb"></i> Философия игры</h3>
+                            <p><strong>Cashflow Газстройпром</strong> — это финансовая настольная игра, которая сочетает классическую механику управления личными финансами с уникальной российской корпоративной спецификой. Здесь вы не только учитесь инвестировать и управлять деньгами, но и погружаетесь в мир крупной строительной компании.</p>
+                        </div>
+
+                        <div class="content-card corporate">
+                            <h3 class="card-title"><i class="fas fa-star"></i> Уникальные особенности</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Реальные российские реалии</h4>
+                                    <p>Ипотека, налоги, санкции, господдержка — все как в жизни российского инвестора.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Корпоративная механика</h4>
+                                    <p>Все игроки работают в одной компании "Газстройпром" и коллективно влияют на её прибыль.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Три пути к победе</h4>
+                                    <p>Классический выход из "крысиных бегов", покупка мечты или корпоративный успех.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card warning">
+                            <h3 class="card-title"><i class="fas fa-users"></i> Для кого эта игра?</h3>
+                            <p>Игра подходит для всех, кто интересуется финансами, инвестициями и бизнесом. От подростков до взрослых, от новичков до опытных инвесторов. Идеально для семейных игр, корпоративных тренингов и встреч с друзьями.</p>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Components -->
+                    <div class="rules-section" id="components">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">2. Компоненты игры</h2>
+                                <p class="section-subtitle">Что входит в комплект</p>
+                            </div>
+                        </div>
+
+                        <table class="rules-table">
+                            <thead>
+                                <tr>
+                                    <th>Компонент</th>
+                                    <th>Количество</th>
+                                    <th>Описание</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Игровые роли</strong></td>
+                                    <td>35 карточек</td>
+                                    <td>От подсобного рабочего до генерального директора Газстройпрома</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Карточки малых сделок</strong></td>
+                                    <td>50 карточек</td>
+                                    <td>Недвижимость, акции, малый бизнес (колода 1)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Карточки больших сделок</strong></td>
+                                    <td>20 карточек</td>
+                                    <td>Крупные инвестиции (колода 2, доступна после выхода из крысиных бегов)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>События рынка</strong></td>
+                                    <td>15 карточек</td>
+                                    <td>Экономические события, влияющие на всех (колода 3)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Корпоративные события</strong></td>
+                                    <td>30 карточек</td>
+                                    <td>События компании Газстройпром (колода 4)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Личные события</strong></td>
+                                    <td>35 карточек</td>
+                                    <td>События из жизни игроков (колода 5)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Мечты</strong></td>
+                                    <td>10 карточек</td>
+                                    <td>Финальные цели игры (колода 6)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Игровое поле</strong></td>
+                                    <td>1</td>
+                                    <td>Двухуровневое поле с "крысиными бегами" и "скоростной дорогой"</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Игровые деньги</strong></td>
+                                    <td>500+ банкнот</td>
+                                    <td>Номиналы: 1 000, 5 000, 10 000, 50 000, 100 000, 500 000 ₽</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Прочие компоненты</strong></td>
+                                    <td>-</td>
+                                    <td>Кубик, фишки игроков, счётчик прибыли компании, балансовые отчёты</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-map"></i> Игровое поле</h3>
+                            <p>Поле состоит из двух концентрических кругов:</p>
+                            
+                            <div class="board-visual">
+                                <div class="outer-track">
+                                    <div class="track-label" style="top: 10%; left: 45%;">СКОРОСТНАЯ ДОРОГА</div>
+                                    <div class="inner-track">
+                                        <div class="track-label" style="top: 40%; left: 35%;">КРЫСИНЫЕ БЕГА</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-home"></i></div>
+                                <div class="step-content">
+                                    <h4>Внутренний круг: "Крысиные бега"</h4>
+                                    <p>Начальная позиция всех игроков. Здесь доступны только малые сделки. Цель — накопить достаточный пассивный доход, чтобы перейти на внешний круг.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-car"></i></div>
+                                <div class="step-content">
+                                    <h4>Внешний круг: "Скоростная дорога"</h4>
+                                    <p>Доступен после выхода из крысиных бегов. Здесь доступны большие сделки и усиливаются некоторые события.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Setup -->
+                    <div class="rules-section" id="setup">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">3. Подготовка к игре</h2>
+                                <p class="section-subtitle">Пошаговая инструкция перед началом</p>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-list-ol"></i> Шаг 1: Распределение ролей</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <p>Перемешайте колоду ролей (35 карточек).</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <p>Каждый игрок тянет по одной карте роли. Можно договориться о выборе или обмене.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <p>Игрок получает начальные деньги в соответствии с выбранной ролью.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-layer-group"></i> Шаг 2: Подготовка колод</h3>
+                            <p>Разложите 6 колод карточек в соответствующие зоны на игровом поле:</p>
+                            
+                            <table class="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Колода</th>
+                                        <th>Количество</th>
+                                        <th>Расположение</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1. Малые сделки</td>
+                                        <td>50 карточек</td>
+                                        <td>В зоне "Малые сделки" на внутреннем круге</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2. Большие сделки</td>
+                                        <td>20 карточек</td>
+                                        <td>В зоне "Большие сделки" на внешнем круге</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3. События рынка</td>
+                                        <td>15 карточек</td>
+                                        <td>В зоне "События рынка"</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4. Корпоративные события</td>
+                                        <td>30 карточек</td>
+                                        <td>В зоне "Корпоративные события" (НОВОЕ!)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5. Личные события</td>
+                                        <td>35 карточек</td>
+                                        <td>В зоне "Личные события"</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6. Мечты</td>
+                                        <td>10 карточек</td>
+                                        <td>В зоне "Мечты" в центре поля</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="content-card corporate">
+                            <h3 class="card-title"><i class="fas fa-building"></i> Шаг 3: Настройка компании</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <p>Установите счётчик прибыли компании "Газстройпром" на значение <strong>1 000 000 ₽</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <p>Поместите счётчик на видное место — это общий показатель для всех игроков.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <p>Объявите корпоративную цель: <strong>2 000 000 ₽</strong> (удвоение прибыли).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-user-check"></i> Шаг 4: Начальные позиции</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <p>Каждый игрок берёт фишку своего цвета и ставит её на стартовую клетку "Зарплата" внутреннего круга.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <p>Игроки заполняют балансовый отчёт в соответствии со своей ролью.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <p>Определите первого игрока (самый младший, самый опытный или бросьте кубик).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Gameplay -->
+                    <div class="rules-section" id="gameplay">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-dice"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">4. Игровой процесс</h2>
+                                <p class="section-subtitle">Как проходит ход игрока</p>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-play"></i> Последовательность хода</h3>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Бросок кубика</h4>
+                                    <p>Игрок бросает один шестигранный кубик и перемещает свою фишку на выпавшее количество клеток по часовой стрелке.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Действие на клетке</h4>
+                                    <p>Выполните действие, соответствующее типу клетки, на которую попала фишка.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Финансовые операции</h4>
+                                    <p>При необходимости совершите покупки, продажи или другие финансовые операции.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Конец хода</h4>
+                                    <p>Пересчитайте свой денежный поток. Ход переходит к следующему игроку.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-th-large"></i> Типы клеток и действий</h3>
+                            
+                            <table class="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Клетка</th>
+                                        <th>Иконка</th>
+                                        <th>Действие</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Зарплата</strong></td>
+                                        <td><i class="fas fa-money-check-alt"></i></td>
+                                        <td>Получите свой месячный оклад из банка</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Сделка</strong></td>
+                                        <td><i class="fas fa-handshake"></i></td>
+                                        <td>Вытяните карту сделки (малую на внутреннем круге, большую на внешнем)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>События рынка</strong></td>
+                                        <td><i class="fas fa-chart-line"></i></td>
+                                        <td>Вытяните карту события рынка, примените эффект ко всем игрокам</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Корпоративное событие</strong></td>
+                                        <td><i class="fas fa-building"></i></td>
+                                        <td>Вытяните карту корпоративного события, обновите прибыль компании</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Личное событие</strong></td>
+                                        <td><i class="fas fa-user"></i></td>
+                                        <td>Вытяните карту личного события, примените эффект только к себе</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Мечта/Благотворительность</strong></td>
+                                        <td><i class="fas fa-star"></i></td>
+                                        <td>На внутреннем круге: благотворительность (10% доходов). На внешнем: можно купить мечту</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-exchange-alt"></i> Финансовые операции</h3>
+                            
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-shopping-cart"></i></div>
+                                <div class="step-content">
+                                    <h4>Покупка активов</h4>
+                                    <p>Любой актив можно купить в свой ход, если у вас достаточно денег для первоначального взноса. Актив добавляется в ваш балансовый отчёт и начинает приносить денежный поток.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-cash-register"></i></div>
+                                <div class="step-content">
+                                    <h4>Продажа активов</h4>
+                                    <p>Вы можете продать любой актив в свой ход. Получите рыночную стоимость актива, погасите связанный с ним кредит (если есть), остаток — ваша прибыль.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-hand-holding-usd"></i></div>
+                                <div class="step-content">
+                                    <h4>Выход из "крысиных бегов"</h4>
+                                    <p>Когда ваш пассивный доход превысит общие месячные расходы, вы выходите на "скоростную дорогу". Переместите фишку на соответствующий сектор внешнего круга.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Corporate System -->
+                    <div class="rules-section" id="corporate">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: var(--corporate);">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">5. Корпоративная система</h2>
+                                <p class="section-subtitle">Управление компанией Газстройпром</p>
+                            </div>
+                        </div>
+
+                        <div class="content-card corporate">
+                            <h3 class="card-title"><i class="fas fa-bullseye"></i> Суть системы</h3>
+                            <p>Все игроки являются сотрудниками одной компании — <strong>Газстройпром</strong>. Коллективно вы управляете её прибылью, которая начинается с 1 000 000 ₽ и должна быть доведена до 2 000 000 ₽.</p>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Текущая прибыль: <strong id="current-profit">1 000 000 ₽</strong></span>
+                                    <span>Цель: <strong>2 000 000 ₽</strong></span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="profit-progress" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card corporate">
+                            <h3 class="card-title"><i class="fas fa-random"></i> Корпоративные события</h3>
+                            <p>Когда игрок попадает на клетку "Корпоративное событие", он вытягивает карту из колоды 4 и применяет её эффект:</p>
+                            
+                            <div class="step">
+                                <div class="step-number">A</div>
+                                <div class="step-content">
+                                    <h4>Изменение прибыли компании</h4>
+                                    <p>Большинство карт изменяют прибыль компании на определённый процент. Например: "+12%" или "-8%".</p>
+                                    <p><strong>Формула:</strong> Изменение = Текущая прибыль × (Процент / 100)</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">B</div>
+                                <div class="step-content">
+                                    <h4>Дополнительные эффекты</h4>
+                                    <p>Некоторые карты также влияют на игроков: изменяют оклады, расходы, дают бонусы или штрафы.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">C</div>
+                                <div class="step-content">
+                                    <h4>Стратегические решения</h4>
+                                    <p>Часть карт предлагает выбор: например, инвестировать в проект или отказаться. Решение принимает вытянувший карту игрок.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card corporate">
+                            <h3 class="card-title"><i class="fas fa-chart-bar"></i> Прогрессия компании</h3>
+                            
+                            <table class="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Этап</th>
+                                        <th>Диапазон прибыли</th>
+                                        <th>Характеристики</th>
+                                        <th>Доступные события</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Выживание</strong></td>
+                                        <td>0 - 1 000 000 ₽</td>
+                                        <td>Базовые операции, восстановление</td>
+                                        <td>Малые (±5-15%)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Рост</strong></td>
+                                        <td>1 000 000 - 1 500 000 ₽</td>
+                                        <td>Стабильное развитие, средние проекты</td>
+                                        <td>Средние (±10-25%)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Процветание</strong></td>
+                                        <td>1 500 000 - 2 000 000 ₽</td>
+                                        <td>Крупные сделки, высокие риски</td>
+                                        <td>Крупные (±20-50%)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="content-card corporate">
+                            <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> Кризисные ситуации</h3>
+                            <p>Если прибыль компании падает ниже определённых уровней, активируются особые правила:</p>
+                            
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-skull-crossbones"></i></div>
+                                <div class="step-content">
+                                    <h4>Ниже 500 000 ₽ (-50%)</h4>
+                                    <p>Все игроки теряют 20% своих наличных денег. Следующие 3 корпоративных события дают +50% эффекта.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-hard-hat"></i></div>
+                                <div class="step-content">
+                                    <h4>Ниже 0 (убытки)</h4>
+                                    <p>Компания в кризисе! Все оклады уменьшаются на 15% до выхода из убытков.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 6: Victory Conditions -->
+                    <div class="rules-section" id="victory">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: var(--accent);">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">6. Условия победы</h2>
+                                <p class="section-subtitle">Три равнозначных пути к победе</p>
+                            </div>
+                        </div>
+
+                        <div class="victory-card classic-1">
+                            <h3 class="victory-title"><i class="fas fa-door-open"></i> Путь 1: Выход из "крысиных бегов"</h3>
+                            <p><strong>Классическая цель:</strong> Добиться, чтобы ваш пассивный месячный доход превысил общие месячные расходы.</p>
+                            
+                            <div class="step">
+                                <div class="step-number">✓</div>
+                                <div class="step-content">
+                                    <h4>Как достичь:</h4>
+                                    <ul>
+                                        <li>Инвестируйте в активы, приносящие пассивный доход</li>
+                                        <li>Снижайте расходы (погашайте кредиты, оптимизируйте бюджет)</li>
+                                        <li>Покупайте акции с дивидендами, недвижимость для сдачи, бизнес</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">🏆</div>
+                                <div class="step-content">
+                                    <h4>Победа:</h4>
+                                    <p>Как только ваш пассивный доход > расходов, объявите о победе! Вы достигли финансовой свободы.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="victory-card classic-2">
+                            <h3 class="victory-title"><i class="fas fa-star"></i> Путь 2: Покупка мечты</h3>
+                            <p><strong>Эмоциональная цель:</strong> Накопить достаточно денег, чтобы купить одну из карточек "Мечта".</p>
+                            
+                            <div class="step">
+                                <div class="step-number">✓</div>
+                                <div class="step-content">
+                                    <h4>Как достичь:</h4>
+                                    <ul>
+                                        <li>Выйдите на "скоростную дорогу" (пассивный доход > расходов)</li>
+                                        <li>Накопите крупную сумму денег (от 20 до 500 миллионов ₽)</li>
+                                        <li>Попадите на клетку "Мечта" на внешнем круге</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">🏆</div>
+                                <div class="step-content">
+                                    <h4>Победа:</h4>
+                                    <p>Оплатите стоимость мечты и заберите карту. Вы реализовали свою самую заветную цель!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="victory-card corporate">
+                            <h3 class="victory-title"><i class="fas fa-chart-line"></i> Путь 3: Корпоративный успех</h3>
+                            <p><strong>Командная цель:</strong> Довести прибыль компании Газстройпром до 2 000 000 ₽ (удвоение).</p>
+                            
+                            <div class="step">
+                                <div class="step-number">✓</div>
+                                <div class="step-content">
+                                    <h4>Как достичь:</h4>
+                                    <ul>
+                                        <li>Вытягивайте корпоративные события, которые увеличивают прибыль</li>
+                                        <li>Принимайте правильные управленческие решения</li>
+                                        <li>Работайте вместе — прибыль компании общая для всех</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">🏆</div>
+                                <div class="step-content">
+                                    <h4>Победа:</h4>
+                                    <p>Когда счётчик прибыли компании достигнет или превысит 2 000 000 ₽, игрок, чей ход привёл к этому, объявляется победителем!</p>
+                                    <p><em>Примечание: Все игроки внесли вклад, но побеждает тот, кто сделал последний шаг.</em></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-flag-checkered"></i> Завершение игры</h3>
+                            <p>Игра заканчивается мгновенно, как только любой игрок достигает ЛЮБОЙ из трёх целей. Не нужно ждать конца круга или хода других игроков.</p>
+                            
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-crown"></i></div>
+                                <div class="step-content">
+                                    <h4>Победитель объявляется сразу</h4>
+                                    <p>Если несколько игроков достигают цели одновременно (в одном круге), побеждает тот, у кого:</p>
+                                    <ol>
+                                        <li>Выше пассивный доход (для пути 1)</li>
+                                        <li>Дороже мечта (для пути 2)</li>
+                                        <li>Больший вклад в прибыль компании (для пути 3)</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 7: Advanced Rules -->
+                    <div class="rules-section" id="advanced">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: var(--warning);">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">7. Расширенные правила</h2>
+                                <p class="section-subtitle">Для опытных игроков</p>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-handshake"></i> Торговля между игроками</h3>
+                            <p>В свой ход вы можете предлагать другим игрокам сделки:</p>
+                            <ul>
+                                <li>Продажа активов по договорной цене</li>
+                                <li>Обмен активами</li>
+                                <li>Предоставление займов (с процентами или без)</li>
+                                <li>Совместные инвестиции в крупные проекты</li>
+                            </ul>
+                            <p><em>Все сделки должны быть публичными и прозрачными. Запрещены тайные соглашения.</em></p>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-user-graduate"></i> Карьерный рост</h3>
+                            <p>Игроки могут повышаться в должности при определённых условиях:</p>
+                            
+                            <table class="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Условие</th>
+                                        <th>Повышение</th>
+                                        <th>Эффект</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Накопил 500 000 ₽</td>
+                                        <td>На 1 уровень выше</td>
+                                        <td>+10% к окладу, новые возможности</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Прибыль компании +30%</td>
+                                        <td>На 2 уровня выше</td>
+                                        <td>+20% к окладу, бонусные карты</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Первый вышел на скоростную дорогу</td>
+                                        <td>Становится "звездой" компании</td>
+                                        <td>Особые привилегии в корпоративных событиях</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-balance-scale"></i> Налоговая система (опционально)</h3>
+                            <p>Каждый раз, когда вы проходите через клетку "Зарплата":</p>
+                            <ol>
+                                <li>Заплатите 13% подоходного налог с полученного оклада</li>
+                                <li>Заплатите 6% налог на дивиденды от пассивного дохода</li>
+                                <li>Получите налоговые вычеты за детей (1 400 ₽ на ребёнка)</li>
+                            </ol>
+                            <p><em>Эту систему можно включать для большей реалистичности или отключать для упрощения.</em></p>
+                        </div>
+                    </div>
+
+                    <!-- Section 8: Examples -->
+                    <div class="rules-section" id="examples">
+                        <div class="section-header">
+                            <div class="section-icon" style="background: var(--danger);">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h2 class="section-title">8. Примеры и стратегии</h2>
+                                <p class="section-subtitle">Как играть эффективно</p>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-play-circle"></i> Пример партии (первые 3 хода)</h3>
+                            
+                            <div class="step">
+                                <div class="step-number">🎮</div>
+                                <div class="step-content">
+                                    <h4>Игроки: 4 человека</h4>
+                                    <p>Директор (25к оклад), Инженер (18к), Бухгалтер (15к), Специалист (10к)</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Ход 1: Директор</h4>
+                                    <p>Выпало 4 → попал на "Корпоративное событие". Вытянул: "Выигран тендер" → прибыль компании +12% (теперь 1 120 000 ₽).</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Ход 2: Инженер</h4>
+                                    <p>Выпало 2 → попал на "Малую сделку". Вытянул: "Однокомнатная квартира" за 3 000 000 ₽. Взнос 300 000 ₽, денежный поток +5 000 ₽. Не покупает — не хватает денег.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Ход 3: Бухгалтер</h4>
+                                    <p>Выпало 5 → попал на "Событие рынка". Вытянул: "Рост ключевой ставки" → все кредиты дороже на 3%. У всех игроков пересчитываются платежи по кредитам.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-chess"></i> Стратегические советы</h3>
+                            
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-bullseye"></i></div>
+                                <div class="step-content">
+                                    <h4>Выберите свою цель в начале</h4>
+                                    <p>Решите, какой путь к победе вы будете преследовать. Это определит вашу стратегию.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-hand-holding-usd"></i></div>
+                                <div class="step-content">
+                                    <h4>Балансируйте риски</h4>
+                                    <p>Не берите слишком много кредитов. Держите резерв наличных на случай непредвиденных событий.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-users"></i></div>
+                                <div class="step-content">
+                                    <h4>Сотрудничайте, но помните о конкуренции</h4>
+                                    <p>Корпоративная цель общая, но победа только у одного. Помогайте компании, но не забывайте о себе.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number"><i class="fas fa-chart-pie"></i></div>
+                                <div class="step-content">
+                                    <h4>Диверсифицируйте инвестиции</h4>
+                                    <p>Не вкладывайте все деньги в один актив. Распределяйте между недвижимостью, акциями и бизнесом.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <h3 class="card-title"><i class="fas fa-question-circle"></i> Частые вопросы (FAQ)</h3>
+                            
+                            <div class="step">
+                                <div class="step-number">Q</div>
+                                <div class="step-content">
+                                    <h4>Что делать, если закончились деньги?</h4>
+                                    <p>Можно продать активы, взять кредит или пропустить ход для накопления. В крайнем случае — объявить банкротство и начать заново с новой ролью.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">Q</div>
+                                <div class="step-content">
+                                    <h4>Можно ли играть вдвоём?</h4>
+                                    <p>Да, игра рассчитана на 2-6 игроков. Для двоих правила не меняются, но игра может закончиться быстрее.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">Q</div>
+                                <div class="step-content">
+                                    <h4>Как долго длится игра?</h4>
+                                    <p>В среднем 2-3 часа. Можно договориться об ограничении по времени (например, 10 кругов) или использовать ускоренные правила.</p>
+                                </div>
+                            </div>
+
+                            <div class="step">
+                                <div class="step-number">Q</div>
+                                <div class="step-content">
+                                    <h4>Что если прибыль компании ушла в минус?</h4>
+                                    <p>Компания в кризисе! Все оклады уменьшаются на 15% до возврата к положительной прибыли. Это мотивирует игроков работать вместе.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="scrollToRulesTop()">
+                            <i class="fas fa-arrow-up"></i> В начало
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ВКЛАДКА РЕДАКТОРА КАРТОЧЕК -->
+            <div class="tab-pane" id="cards-tab">
+                <div class="cards-tab-container">
+                    <!-- Статистика редактора -->
+                    <div class="cards-stats" id="cards-stats" style="display: none;"></div>
+
+                    <!-- Основные элементы управления -->
+                    <div class="main-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Поиск по всем карточкам...">
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-success" id="addCardBtn">
+                                <i class="fas fa-plus-circle"></i> Добавить карточку
+                            </button>
+                            <button class="btn btn-primary" id="exportBtn">
+                                <i class="fas fa-download"></i> Экспорт данных
+                            </button>
+                            <button class="btn btn-danger" id="resetBtn">
+                                <i class="fas fa-redo"></i> Сбросить к исходным
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Фильтры -->
+                    <div class="filter-section">
+                        <div class="filter-buttons" id="filter-buttons">
+                            <!-- Кнопки фильтров будут добавлены через JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Контейнер для карточек -->
+                    <div id="cardsContainer">
+                        <!-- Карточки будут отображены здесь -->
+                    </div>
+                    
+                    <!-- Футер редактора -->
+                    <footer class="cards-footer">
+                        <p>Cashflow Газстройпром — настольная финансовая игра. Версия 2.0</p>
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно для редактирования/создания карточки -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Редактирование карточки</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="cardForm">
+                    <input type="hidden" id="cardId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardTitle">Название карточки *</label>
+                            <input type="text" id="cardTitle" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardType">Тип карточки *</label>
+                            <input type="text" id="cardType" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardCategory">Категория *</label>
+                            <select id="cardCategory" class="form-control" required>
+                                <option value="roles">Роли</option>
+                                <option value="small-deals">Малые сделки</option>
+                                <option value="big-deals">Большие сделки</option>
+                                <option value="market">События рынка</option>
+                                <option value="corporate">Корпоративные события</option>
+                                <option value="personal">Личные события</option>
+                                <option value="education">Образование</option>
+                                <option value="dream">Мечты</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="colorClass">Цветовая категория</label>
+                            <select id="colorClass" class="form-control">
+                                <option value="">Авто (по категории)</option>
+                                <option value="role">Синий (Роли)</option>
+                                <option value="real-estate">Зеленый (Недвижимость)</option>
+                                <option value="stocks">Оранжевый (Акции)</option>
+                                <option value="business">Фиолетовый (Бизнес)</option>
+                                <option value="market-pos">Голубой (Позитивные события)</option>
+                                <option value="market-neg">Красный (Негативные события)</option>
+                                <option value="corporate">Коричневый (Корпоративные)</option>
+                                <option value="personal-pos">Бирюзовый (Личные позитивные)</option>
+                                <option value="personal-neg">Оранжево-красный (Личные негативные)</option>
+                                <option value="personal-neutral">Серый (Личные нейтральные)</option>
+                                <option value="education-blue">Синий (Образование - основы)</option>
+                                <option value="education-green">Зеленый (Образование - профессионал)</option>
+                                <option value="education-yellow">Желтый (Образование - эксперт)</option>
+                                <option value="dream">Розовый (Мечты)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardFooter">Подпись (footer)</label>
+                        <textarea id="cardFooter" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="fields-container">
+                        <div class="form-group">
+                            <label>Поля карточки</label>
+                            <button type="button" class="btn btn-small btn-primary" id="addFieldBtn">
+                                <i class="fas fa-plus"></i> Добавить поле
+                            </button>
+                        </div>
+                        
+                        <div id="fieldsList">
+                            <!-- Поля будут добавляться динамически -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="deleteCardBtn">
+                    <i class="fas fa-trash"></i> Удалить карточку
+                </button>
+                <button type="button" class="btn" id="cancelBtn">
+                    Отмена
+                </button>
+                <button type="button" class="btn btn-success" id="saveCardBtn">
+                    <i class="fas fa-save"></i> Сохранить карточку
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast уведомления -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Изменения сохранены</span>
+    </div>
+
+    <!-- Подключаем JavaScript файлы -->
+    <script src="cards.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- Встроенный JavaScript -->
+    <script>
+        // Функция для прокрутки к началу правил
+        function scrollToRulesTop() {
+            const rulesTab = document.getElementById('rules-tab');
+            if (rulesTab.classList.contains('active')) {
+                rulesTab.scrollTop = 0;
+            }
+        }
+
+        // Правила уже встроены в HTML, ничего загружать не нужно
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Cashflow Газстройпром загружен. Правила встроены в HTML.');
+        });
+    </script>
+</body>
+</html>
