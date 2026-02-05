@@ -582,4 +582,120 @@ document.addEventListener('DOMContentLoaded', function() {
     initModalHandlers();
     
     console.log('Cashflow Газстройпром загружен. Редактор карточек готов к работе.');
+    function updateHeaderForTab(tabId) {
+    if (tabId === 'rules-tab') {
+        // ... существующий код для правил (не меняй) ...
+        headerTitle.textContent = 'Cashflow Газстройпром';
+        headerSubtitle.textContent = 'Правила настольной финансовой игры с корпоративной механикой';
+        
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <span class="number">${CARDS_DATA.length + 195}</span>
+                <span class="label">Игровых элементов</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">3</span>
+                <span class="label">Пути к победе</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">2-6</span>
+                <span class="label">Игроков</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">2-3</span>
+                <span class="label">Часа игры</span>
+            </div>
+        `;
+        
+    } else if (tabId === 'cards-tab') {
+        // ... существующий код для редактора (не меняй) ...
+        headerTitle.textContent = 'Cashflow Газстройпром';
+        headerSubtitle.textContent = 'Редактор игровых карточек';
+        
+        const rolesCount = cardsData.filter(c => c.category === 'roles').length;
+        
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <span class="number">${rolesCount}</span>
+                <span class="label">Игровых ролей</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">${cardsData.length}</span>
+                <span class="label">Всего карточек</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">8</span>
+                <span class="label">Категорий</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">${countAllFields()}</span>
+                <span class="label">Всего полей</span>
+            </div>
+        `;
+        
+        initCardsEditor();
+        
+    } else if (tabId === 'calculator-tab') {
+        // ★ ЭТО НОВЫЙ КОД ДЛЯ КАЛЬКУЛЯТОРА ★
+        headerTitle.textContent = 'Cashflow Газстройпром';
+        headerSubtitle.textContent = 'Персональный калькулятор игрока';
+        
+        // Статистика для калькулятора
+        const savedData = localStorage.getItem('cashflowCalculator');
+        const playerData = savedData ? JSON.parse(savedData).playerData : null;
+        
+        let cashflow = 0;
+        let assetsCount = 0;
+        let liabilitiesCount = 0;
+        
+        if (playerData) {
+            cashflow = calculateCashflowForHeader(playerData);
+            assetsCount = playerData.assets ? playerData.assets.length : 0;
+            liabilitiesCount = playerData.liabilities ? playerData.liabilities.length : 0;
+        }
+        
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <span class="number">${playerData ? formatCurrencyShort(cashflow) : '0'}</span>
+                <span class="label">Денежный поток</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">${assetsCount}</span>
+                <span class="label">Активов</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">${liabilitiesCount}</span>
+                <span class="label">Пассивов</span>
+            </div>
+            <div class="stat-card">
+                <span class="number">${playerData && playerData.history ? playerData.history.length : '0'}</span>
+                <span class="label">Операций</span>
+            </div>
+        `;
+    }
+}
+
+// Вспомогательные функции для калькулятора
+function formatCurrencyShort(amount) {
+    if (amount >= 1000000) return (amount / 1000000).toFixed(1) + 'M';
+    if (amount >= 1000) return (amount / 1000).toFixed(0) + 'K';
+    return amount.toString();
+}
+
+function calculateCashflowForHeader(playerData) {
+    let income = playerData.salary || 0;
+    let expenses = playerData.expenses || 0;
+    
+    (playerData.assets || []).forEach(asset => {
+        income += asset.monthly || 0;
+    });
+    
+    (playerData.liabilities || []).forEach(liability => {
+        expenses += Math.abs(liability.monthly || 0);
+    });
+    
+    return income - expenses;
+}
+
+console.log('Cashflow Газстройпром загружен. Редактор карточек готов к работе.');
 });
